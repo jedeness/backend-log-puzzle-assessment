@@ -26,8 +26,18 @@ def read_urls(filename):
     extracting the hostname from the filename itself, sorting
     alphabetically in increasing order, and screening out duplicates.
     """
-    # +++your code here+++
-    pass
+    with open(filename, 'r') as f:
+        text = f.read()
+
+    pattern = r'(\/edu.*jpg)'
+    regex_urls = list(dict.fromkeys(re.findall(pattern, text)))
+    urls = []
+    for link in regex_urls:
+        urls.append("http://code.google.com" + link)
+    urls = sorted(urls, key=lambda url:url.split('-')[-1])
+    return urls
+
+
 
 
 def download_images(img_urls, dest_dir):
@@ -38,9 +48,29 @@ def download_images(img_urls, dest_dir):
     to show each local image file.
     Creates the directory if necessary.
     """
-    # +++your code here+++
-    pass
+    # make directory
+    # directory = "Images"
+    # parent_dir = "/backend-log-puzzle-assessment/"
+    # path = os.path.join(parent_dir, directory)
+    # os.mkdir(path)
+    
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+    
+    image_tags = []
 
+    for index, url in enumerate(img_urls):
+        print("Downloading image{}...".format(index))
+        urllib.request.urlretrieve(url, "{}/img{}.jpeg".format(dest_dir, index))
+        image_tags.append("<img src='./img{}.jpeg'>".format(index))
+    with open("{}/index.html".format(dest_dir), "w+") as f:
+        message = """<html>
+        <body>
+        {}
+        </body>
+        </html> """.format("".join(image_tags))
+        f.write(message)
+        
 
 def create_parser():
     """Creates an argument parser object."""
